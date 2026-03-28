@@ -27,8 +27,8 @@ void printStudents(const vector<Student *> &students, const string &label)
 
 //  ALGORITHM 1 — O(1): Fixed Grade Summary Dashboard
 /*
- *  Print a fixed 5x5 grade-band summary table for the faculty.
- *  The table dimensions are compile-time constants — they never
+ *  Prinst a fixed grade-band summary table for the faculty.
+ *  The table dimensions are constants — they never
  *  change regardless of how many students are in the system.
  */
 void fixedGradeDashboard()
@@ -119,7 +119,7 @@ void runBinarySearch(const vector<Student *> &students)
 
 //  ALGORITHM 3 — O(n): Linear Search for Top Student
 /*
- *  Find the highest-scoring student from an UNSORTED array.
+ *  Finds the highest-scoring student from an the unsorted array.
  *  Since there is no ordering, every student must
  *  be viewed at least once to confirm the maximum.
  */
@@ -144,7 +144,7 @@ void linearSearchTopStudent(const vector<Student *> &students)
 
 //  ALGORITHM 4 — O(n²): Bubble Sort by Student Number
 /*
- *  Sort students by student number in ascending order so that
+ *  Sorts students by student number in ascending order so that
  *  binary search (Algorithm 2) can be applied.
  */
 void bubbleSort(vector<Student *> &students)
