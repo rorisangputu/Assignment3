@@ -25,6 +25,14 @@ void printStudents(const vector<Student *> &students, const string &label)
         s->getProfile();
 }
 
+void printAllProfiles(const vector<Person *> &people, const string &label)
+{
+    cout << "\n"
+         << label << ":\n";
+    for (const auto &p : people)
+        p->getProfile(); // virtual dispatch — correct version called automatically
+}
+
 //  ALGORITHM 1 — O(1): Fixed Grade Summary Dashboard
 /*
  *  Prinst a fixed grade-band summary table for the faculty.
@@ -388,7 +396,7 @@ int main()
     // ── Algorithm 3: O(n) -- Linear
     linearSearchTopStudent(students);
 
-    // ── Algorithm 4: O(n log n)
+    // ── Algorithm 4: O(n log n) -- Log Linear
     vector<Student *> toMergeSort = students;
     runMergeSort(toMergeSort);
 
@@ -397,12 +405,12 @@ int main()
     vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
     bubbleSort(shuffled);
 
-    // ── Algorithm 6: O(2^n)
+    // ── Algorithm 6: O(2^n) -- Exponentials
     // Only top 4 students (2^4 = 16 subsets)
     vector<Student *> topFour = {s4, s3, p2, p1};
     generateSubsets(topFour);
 
-    // ── Algorithm 7: O(n!)
+    // ── Algorithm 7: O(n!) -- Factorial
     // Only 3 students (3! = 6 permutations)
     vector<Student *> presenters = {s4, s3, p2};
     runPermutations(presenters);

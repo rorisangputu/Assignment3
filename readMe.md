@@ -1,4 +1,5 @@
 # Student Grade Management & Analysis System
+
 ### APM11A1 - Advanced Programming | Assignment 3
 
 ---
@@ -40,7 +41,7 @@ Assignment3/
 
 **How it works:** Two for loops iterate over fixed-size arrays — always 5 grade bands and always 5 performance categories. The table is always 5×5 = 25 cells regardless of how many students are in the system.
 
-**Why O(1):** The loop sizes are compile-time constants. The student count `n` has absolutely no effect on how many iterations run. Whether there are 8 students or 80,000, this function always does exactly 25 iterations. That is the definition of constant time.
+**Why O(1):** The loop sizes never change. Whether there are 8 students or 80,000 students in the system, this function always does exactly 25 iterations — nothing more, nothing less. The number of students has zero effect on how long this takes to run. That is what constant time means.
 
 ```
 Big-O: O(1)   Big-Θ: Θ(1)   Big-Ω: Ω(1)   Space: O(1)
@@ -54,13 +55,13 @@ Big-O: O(1)   Big-Θ: Θ(1)   Big-Ω: Ω(1)   Space: O(1)
 
 **How it works:** The array is first sorted by student number. Binary search then checks the middle element — if the target is smaller it discards the right half, if larger it discards the left half. It keeps halving the remaining search space until the student is found or confirmed absent.
 
-**Why O(log n):** Each iteration cuts the problem in half. For 8 students, at most 3 comparisons are needed (log₂8 = 3). For 1024 students, at most 10. The recurrence T(n) = T(n/2) + O(1) solves to O(log n) by the Master Theorem.
+**Why O(log n):** Each step cuts the remaining students in half. With 8 students you need at most 3 steps because you can halve 8 exactly 3 times before reaching 1. With 1024 students you need at most 10 steps. The work grows very slowly compared to the number of students — that is what logarithmic time means.
 
 ```
 Big-O: O(log n)   Big-Θ: Θ(log n)   Big-Ω: Ω(1)   Space: O(1)
 ```
 
-> Best case Ω(1) — the very first midpoint checked happens to be the target.
+> Best case Ω(1) — the very first midpoint checked happens to be the target student.
 
 ---
 
@@ -70,7 +71,7 @@ Big-O: O(log n)   Big-Θ: Θ(log n)   Big-Ω: Ω(1)   Space: O(1)
 
 **How it works:** One pass through the entire array, keeping track of the highest grade seen so far. Every student is compared once against the current maximum.
 
-**Why O(n):** There is no shortcut when the data is unsorted. Even if the top student is the very first element, every remaining student still needs to be checked to confirm no higher grade exists. Best, average and worst case are all O(n).
+**Why O(n):** There is no shortcut when the data is unsorted. Even if the top student happens to be the very first one in the list, every remaining student still needs to be checked to confirm no higher grade exists. The more students there are, the longer it takes — proportionally. That is what linear time means.
 
 ```
 Big-O: O(n)   Big-Θ: Θ(n)   Big-Ω: Ω(n)   Space: O(1)
@@ -82,15 +83,15 @@ Big-O: O(n)   Big-Θ: Θ(n)   Big-Ω: Ω(n)   Space: O(1)
 
 **Task:** Rank all students by grade from highest to lowest.
 
-**How it works:** Recursively splits the array into two halves until each half has one element (which is trivially sorted), then merges the halves back together in sorted order. Splitting goes log n levels deep and merging costs O(n) at each level.
+**How it works:** Repeatedly splits the student list in half until each piece has only one student in it. A single student is already in order by definition. It then merges those pieces back together in the correct order. Each merge step puts students in the right position as the pieces get combined back into a full sorted list.
 
-**Why O(n log n):** The recurrence is T(n) = 2T(n/2) + O(n). By the Master Theorem (Case 2) this solves to O(n log n). This is the most efficient comparison-based sort and performs the same in all cases — already sorted input runs identically to reverse sorted input.
+**Why O(n log n):** The splitting keeps halving the list — the same slow growth as binary search. But unlike binary search, merging requires looking at every student at each level to put them in order. So you have the slow halving growth combined with looking at all students at each step. This makes it slightly worse than linear but far better than quadratic. It also performs exactly the same whether the list starts sorted or completely shuffled.
 
 ```
 Big-O: O(n log n)   Big-Θ: Θ(n log n)   Big-Ω: Ω(n log n)   Space: O(n)
 ```
 
-> Space is O(n) because temporary arrays are allocated during each merge step.
+> Space is O(n) because the algorithm needs temporary holding space for students during each merge step.
 
 ---
 
@@ -98,15 +99,15 @@ Big-O: O(n log n)   Big-Θ: Θ(n log n)   Big-Ω: Ω(n log n)   Space: O(n)
 
 **Task:** Sort students by student number in ascending order so that binary search (Algorithm 2) can be applied to them.
 
-**How it works:** Two nested loops repeatedly compare adjacent students and swap them if they are out of order. The largest unsorted element bubbles to its correct position at the end of the array on each outer iteration. An early-exit flag stops the sort early if the array becomes sorted before all passes complete.
+**How it works:** Two nested loops repeatedly compare neighbouring students and swap them if they are out of order. The largest unsorted student bubbles to their correct position at the end of the list on each outer pass. An early-exit check stops the sort immediately if the list becomes fully sorted before all passes are complete.
 
-**Why O(n²):** Two nested loops both scale with n. Worst case comparisons: (n−1) + (n−2) + ... + 1 = n(n−1)/2 = O(n²). Contrasting this directly with merge sort on the same data illustrates why algorithm selection matters — both sort the same students but at very different costs as n grows.
+**Why O(n²):** There is a loop inside a loop and both depend on how many students there are. Double the students and the work roughly quadruples. This is why bubble sort becomes very slow on large datasets compared to merge sort — both sort the same students, but bubble sort does far more work to get there.
 
 ```
 Big-O: O(n²)   Big-Θ: Θ(n²)   Big-Ω: Ω(n)   Space: O(1)
 ```
 
-> Best case Ω(n) — if the array is already sorted, the early-exit flag fires after one pass.
+> Best case Ω(n) — if the list is already sorted, the early-exit check fires after just one pass through all students.
 
 ---
 
@@ -114,9 +115,9 @@ Big-O: O(n²)   Big-Θ: Θ(n²)   Big-Ω: Ω(n)   Space: O(1)
 
 **Task:** Generate every possible combination of students that could form a study group from a shortlist of top performers.
 
-**How it works:** Uses a bitmask approach — each integer from 0 to 2ⁿ−1 is treated as a binary number where each bit represents whether a student is included (1) or excluded (0) from that subset. Iterating through all integers from 0 to 2ⁿ−1 produces every possible combination.
+**How it works:** For each student the algorithm asks one question — is this student in the group or not? That gives two possibilities per student. All those possibilities combined produce every possible grouping. Each combination is generated by treating each student as a yes or no decision and working through all possible combinations of those decisions.
 
-**Why O(2^n):** Each student has two states — in or out. For n students this gives 2×2×...×2 (n times) = 2ⁿ possible subsets. This algorithm is intentionally run on only 4 students (2⁴ = 16 subsets). At n=20 this would produce over one million subsets; at n=30, over one billion.
+**Why O(2^n):** Every time you add one more student to the shortlist, the number of possible combinations doubles. With 2 students there are 4 combinations. With 3 there are 8. With 4 there are 16. With 10 there would be 1024. This is why the algorithm is intentionally run on only 4 students — at larger numbers it becomes completely impractical very quickly.
 
 ```
 Big-O: O(2^n)   Big-Θ: Θ(2^n)   Big-Ω: Ω(2^n)   Space: O(n)
@@ -128,15 +129,15 @@ Big-O: O(2^n)   Big-Θ: Θ(2^n)   Big-Ω: Ω(2^n)   Space: O(n)
 
 **Task:** Generate every possible order in which a group of students could present their projects to the class.
 
-**How it works:** Uses recursive backtracking — at each level of recursion, one student is placed in the current position (swap into place), all orderings of the remaining students are generated recursively, then the swap is undone to restore the original order for the next choice. This explore-then-undo pattern is called backtracking.
+**How it works:** The algorithm places one student in the first position, then generates every possible ordering of the remaining students for the positions that follow. It then tries the next student in the first position and does the same thing again, repeating until every possible ordering has been produced.
 
-**Why O(n!):** There are n choices for position 1, n−1 for position 2, and so on: n × (n−1) × (n−2) × ... × 1 = n!. This algorithm is intentionally run on only 3 students (3! = 6 orderings). At n=8 this produces 40,320 orderings; at n=12, nearly 500 million.
+**Why O(n!):** With 1 student there is only 1 possible order. With 2 students there are 2 orders. With 3 students there are 6. With 4 there are 24. With 5 there are 120. The number of orderings grows explosively — each additional student multiplies the total by one more. This is why the algorithm is intentionally run on only 3 students. At 8 students it would produce 40,320 orderings; at 12 students, nearly 500 million.
 
 ```
 Big-O: O(n!)   Big-Θ: Θ(n!)   Big-Ω: Ω(n!)   Space: O(n)
 ```
 
-> Space is O(n) because the recursion call stack grows n levels deep.
+> Space is O(n) because each recursive call adds one level to the call stack, and the stack only ever grows as deep as the number of students.
 
 ---
 
@@ -229,9 +230,9 @@ This compiles and immediately runs in one command.
 
 ## OOP Summary
 
-| Concept | Where it appears |
-|---|---|
-| Abstraction | `Person` is abstract — cannot be instantiated directly |
-| Inheritance | `Student` extends `Person`, `PostgradStudent` extends `Student` |
-| Polymorphism | `getProfile()` is virtual — correct override called based on actual object type |
-| Encapsulation | All fields are private/protected, accessed only through getters |
+| Concept       | Where it appears                                                                |
+| ------------- | ------------------------------------------------------------------------------- |
+| Abstraction   | `Person` is abstract — cannot be instantiated directly                          |
+| Inheritance   | `Student` extends `Person`, `PostgradStudent` extends `Student`                 |
+| Polymorphism  | `getProfile()` is virtual — correct override called based on actual object type |
+| Encapsulation | All fields are private/protected, accessed only through getters                 |
