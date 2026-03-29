@@ -367,8 +367,9 @@ int main()
 
     // ── Algorithm 2: O(log n) -- Logarithmic
     // Needs sorted array — sort first using bubble sort (Algo 5)
-    vector<Student *> sorted = students;
-    runBinarySearch(sorted);
+    vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
+    bubbleSort(shuffled);
+    runBinarySearch(shuffled);
 
     // ── Algorithm 3: O(n) -- Linear
     linearSearchTopStudent(students);
@@ -379,8 +380,8 @@ int main()
 
     // ── Algorithm 5: O(n²) ─- Quadratic
     // Shuffle so the sort is non-trivial
-    vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
-    bubbleSort(shuffled);
+    vector<Student *> mixed = {s6, s3, p2, s1, s5, p1, s2, s4};
+    bubbleSort(mixed);
 
     // ── Algorithm 6: O(2^n) -- Exponentials
     // Only top 4 students (2^4 = 16 subsets)
