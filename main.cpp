@@ -152,10 +152,8 @@ void linearSearchTopStudent(const vector<Student *> &students)
 
 //  ALGORITHM 4 — O(n log n): Merge Sort by Grade (Descending)
 /*
- *  PROBLEM:
- *  Produce a class ranking by sorting all students by grade
- *  in descending order. Merge sort guarantees O(n log n) in
- *  ALL cases — unlike quicksort which degrades to O(n²).
+ *  Produces a class ranking by sorting all students by grade
+ *  in descending order.
  */
 void merge(vector<Student *> &arr, int left, int mid, int right)
 {
@@ -237,21 +235,8 @@ void bubbleSort(vector<Student *> &students)
 
 //  ALGORITHM 6 — O(2^n): Study Group Subset Generator
 /*
- *  PROBLEM:
  *  Generate every possible study group combination from a
- *  shortlist of top students. The lecturer needs to evaluate
- *  all group formations for scheduling and skill balance.
- *
- *  WHY O(2^n):
- *  Each student is either IN or OUT of a subset → 2^n subsets.
- *  Represented as bitmasks 0 to 2^n-1. Outer loop: 2^n iters.
- *  Inner loop: n iters per subset → O(n * 2^n) = O(2^n).
- *
- *  Big-O : O(2^n)   Big-Θ : Θ(2^n)   Big-Ω : Ω(2^n)
- *  Space : O(n) — one bitmask variable and loop indices
- *
- *  NOTE: Intentionally run on 4 students only (2^4 = 16).
- *  At n=20 this produces 1,048,576 subsets.
+ *  shortlist of top students.
  */
 void generateSubsets(const vector<Student *> &students)
 {
@@ -283,20 +268,8 @@ void generateSubsets(const vector<Student *> &students)
 
 //  ALGORITHM 7 — O(n!): Presentation Order Generator
 /*
- *  PROBLEM:
  *  Generate every possible presentation order for a small
- *  group of students. The lecturer evaluates all orderings
- *  to determine the fairest and most effective sequence.
- *
- *  WHY O(n!):
- *  n choices for position 1, (n-1) for position 2, etc.
- *  Total orderings = n! Recursive backtracking explores all.
- *  n=3→6, n=4→24, n=5→120, n=8→40320, n=10→3,628,800.
- *
- *  Big-O : O(n!)   Big-Θ : Θ(n!)   Big-Ω : Ω(n!)
- *  Space : O(n) — recursion call stack grows n levels deep
- *
- *  NOTE: Run on 3 students only (3! = 6 permutations).
+ *  group of students.
  */
 int permCount = 0;
 
