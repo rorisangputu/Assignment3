@@ -33,6 +33,10 @@ void printAllProfiles(const vector<Person *> &people, const string &label)
         p->getProfile(); // virtual dispatch — correct version called automatically
 }
 
+// =================================================
+// ALGOS
+// =================================================
+
 //  ALGORITHM 1 — O(1): Fixed Grade Summary Dashboard
 /*
  *  Prinst a fixed grade-band summary table for the faculty.
