@@ -108,7 +108,7 @@ int binarySearch(const vector<Student *> &students, int target)
 void runBinarySearch(const vector<Student *> &students)
 {
     printDivider("ALGO 2: O(log n) Logarithmic — Binary Search");
-    cout << "(Requires array sorted by student number (Algo 4: Bubble Sort))\n";
+    cout << "(Requires array sorted by student number (Algo 5: Bubble Sort))\n";
 
     cout << "\nSearching for student 23004:\n";
     binarySearch(students, 23004);
@@ -142,7 +142,57 @@ void linearSearchTopStudent(const vector<Student *> &students)
     students[maxIdx]->getProfile();
 }
 
-//  ALGORITHM 4 — O(n²): Bubble Sort by Student Number
+//  ALGORITHM 4 — O(n log n): Merge Sort by Grade (Descending)
+/*
+ *  PROBLEM:
+ *  Produce a class ranking by sorting all students by grade
+ *  in descending order. Merge sort guarantees O(n log n) in
+ *  ALL cases — unlike quicksort which degrades to O(n²).
+ */
+void merge(vector<Student *> &arr, int left, int mid, int right)
+{
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<Student *> L(arr.begin() + left, arr.begin() + left + n1);
+    vector<Student *> R(arr.begin() + mid + 1, arr.begin() + mid + 1 + n2);
+
+    int i = 0, j = 0, k = left;
+
+    // Merge in DESCENDING order of grade
+    while (i < n1 && j < n2)
+    {
+        if (L[i]->getGrade() >= R[j]->getGrade())
+            arr[k++] = L[i++];
+        else
+            arr[k++] = R[j++];
+    }
+    while (i < n1)
+        arr[k++] = L[i++];
+    while (j < n2)
+        arr[k++] = R[j++];
+}
+
+void mergeSort(vector<Student *> &arr, int left, int right)
+{
+    if (left < right)
+    {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);      // sort left half
+        mergeSort(arr, mid + 1, right); // sort right half
+        merge(arr, left, mid, right);   // merge both halves
+    }
+}
+
+void runMergeSort(vector<Student *> &students)
+{
+    printDivider("ALGORITHM 4: O(n log n) — Merge Sort (by Grade)");
+    printStudents(students, "Before Merge Sort");
+    mergeSort(students, 0, (int)students.size() - 1);
+    printStudents(students, "After Merge Sort (Descending by Grade)");
+}
+
+//  ALGORITHM 5 — O(n²): Bubble Sort by Student Number
 /*
  *  Sorts students by student number in ascending order so that
  *  binary search (Algorithm 2) can be applied.
@@ -177,6 +227,123 @@ void bubbleSort(vector<Student *> &students)
     cout << "\n  Total swaps: " << totalSwaps << "\n";
 }
 
+//  ALGORITHM 6 — O(2^n): Study Group Subset Generator
+/*
+ *  PROBLEM:
+ *  Generate every possible study group combination from a
+ *  shortlist of top students. The lecturer needs to evaluate
+ *  all group formations for scheduling and skill balance.
+ *
+ *  WHY O(2^n):
+ *  Each student is either IN or OUT of a subset → 2^n subsets.
+ *  Represented as bitmasks 0 to 2^n-1. Outer loop: 2^n iters.
+ *  Inner loop: n iters per subset → O(n * 2^n) = O(2^n).
+ *
+ *  Big-O : O(2^n)   Big-Θ : Θ(2^n)   Big-Ω : Ω(2^n)
+ *  Space : O(n) — one bitmask variable and loop indices
+ *
+ *  NOTE: Intentionally run on 4 students only (2^4 = 16).
+ *  At n=20 this produces 1,048,576 subsets.
+ */
+void generateSubsets(const vector<Student *> &students)
+{
+    printDivider("ALGORITHM 6: O(2^n) — Study Group Subset Generator");
+
+    int n = (int)students.size();
+    int total = 1 << n; // 2^n via bit shift
+
+    cout << "\n  " << total << " possible combinations for "
+         << n << " students:\n\n";
+
+    for (int mask = 0; mask < total; mask++)
+    {
+        cout << "  Subset " << mask << ": { ";
+        bool empty = true;
+        for (int i = 0; i < n; i++)
+        {
+            if (mask & (1 << i))
+            { // is bit i set?
+                cout << students[i]->getName() << " ";
+                empty = false;
+            }
+        }
+        if (empty)
+            cout << "(empty)";
+        cout << "}\n";
+    }
+}
+
+//  ALGORITHM 7 — O(n!): Presentation Order Generator
+/*
+ *  PROBLEM:
+ *  Generate every possible presentation order for a small
+ *  group of students. The lecturer evaluates all orderings
+ *  to determine the fairest and most effective sequence.
+ *
+ *  WHY O(n!):
+ *  n choices for position 1, (n-1) for position 2, etc.
+ *  Total orderings = n! Recursive backtracking explores all.
+ *  n=3→6, n=4→24, n=5→120, n=8→40320, n=10→3,628,800.
+ *
+ *  Big-O : O(n!)   Big-Θ : Θ(n!)   Big-Ω : Ω(n!)
+ *  Space : O(n) — recursion call stack grows n levels deep
+ *
+ *  NOTE: Run on 3 students only (3! = 6 permutations).
+ */
+int permCount = 0;
+
+void generatePermutations(vector<Student *> &students, int start)
+{
+    if (start == (int)students.size())
+    {
+        permCount++;
+        cout << "  Order " << permCount << ": ";
+        for (int i = 0; i < (int)students.size(); i++)
+        {
+            cout << students[i]->getName();
+            if (i < (int)students.size() - 1)
+                cout << " -> ";
+        }
+        cout << "\n";
+        return;
+    }
+    for (int i = start; i < (int)students.size(); i++)
+    {
+        swap(students[start], students[i]);        // choose
+        generatePermutations(students, start + 1); // recurse
+        swap(students[start], students[i]);        // backtrack
+    }
+}
+
+void runPermutations(vector<Student *> students)
+{
+    printDivider("ALGORITHM 7: O(n!) — Presentation Order Generator");
+
+    int n = (int)students.size();
+    int fact = 1;
+    for (int i = 1; i <= n; i++)
+        fact *= i;
+
+    cout << "\n  Generating all " << fact
+         << " orderings for " << n << " students:\n\n";
+
+    permCount = 0;
+    generatePermutations(students, 0);
+}
+
+//  POLYMORPHISM DEMO
+//  Store both Student and PostgradStudent in a vector<Person*>
+//  and call getProfile() — the correct override fires for each.
+void polymorphismDemo(const vector<Person *> &people)
+{
+    printDivider("OOP DEMO — Polymorphism via virtual getProfile()");
+    cout << "\n  Calling getProfile() on a vector<Person*> that holds\n";
+    cout << "  both Student and PostgradStudent objects:\n\n";
+    for (const auto &p : people)
+        p->getProfile(); // runtime dispatch — correct version called
+    cout << "\n  Notice: same function call, different output per type.\n";
+}
+
 // ============================================================
 //  MAIN
 // ============================================================
@@ -204,23 +371,43 @@ int main()
     // Working array for algorithms (Student* so we can access grade/number)
     vector<Student *> students = {s1, s2, s3, s4, s5, s6, p1, p2};
 
+    // Polymorphism demo array (Person* — holds both types)
+    vector<Person *> people = {s1, s2, s3, s4, s5, s6, p1, p2};
+
+    // ── OOP / Polymorphism demo
+    polymorphismDemo(people);
+
     //  Algorithm 1: O(1) - Constant
     fixedGradeDashboard();
 
     // ── Algorithm 2: O(log n) -- Logarithmic
-    // Needs sorted array — sort first using bubble sort (Algo 4)
+    // Needs sorted array — sort first using bubble sort (Algo 5)
     vector<Student *> sorted = students;
     runBinarySearch(sorted);
 
     // ── Algorithm 3: O(n) -- Linear
     linearSearchTopStudent(students);
 
-    // ── Algorithm 4: O(n²) ─- Quadratic
+    // ── Algorithm 4: O(n log n)
+    vector<Student *> toMergeSort = students;
+    runMergeSort(toMergeSort);
+
+    // ── Algorithm 5: O(n²) ─- Quadratic
     // Shuffle so the sort is non-trivial
     vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
     bubbleSort(shuffled);
 
-    // ── Clean up heap memory ──────────────────────────────
+    // ── Algorithm 6: O(2^n)
+    // Only top 4 students (2^4 = 16 subsets)
+    vector<Student *> topFour = {s4, s3, p2, p1};
+    generateSubsets(topFour);
+
+    // ── Algorithm 7: O(n!)
+    // Only 3 students (3! = 6 permutations)
+    vector<Student *> presenters = {s4, s3, p2};
+    runPermutations(presenters);
+
+    // ── Clean up heap memory
     delete s1;
     delete s2;
     delete s3;
