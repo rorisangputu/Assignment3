@@ -1,0 +1,237 @@
+# Student Grade Management & Analysis System
+### APM11A1 - Advanced Programming | Assignment 3
+
+---
+
+## What is this?
+
+This is a Student Grade Management and Analysis System built in C++. It simulates a backend system that a university faculty admin would use to manage student records and perform various administrative tasks — from looking up a single student to generating every possible study group combination.
+
+The system holds a list of students, each with a name, age, student number and grade. It then runs seven different algorithms against that data, each one solving a real administrative task while demonstrating a different time complexity class.
+
+The data model is built using OOP with a three-level inheritance chain:
+
+```
+Person              ← abstract base class (name, age)
+  └── Student       ← adds studentNumber, grade
+        └── PostgradStudent  ← adds researchTopic
+```
+
+---
+
+## Project Structure
+
+```
+Assignment3/
+├── main.cpp                  ← all 7 algorithms + main function
+└── models/
+    ├── Person.h              ← abstract base class
+    ├── Student.h             ← inherits Person
+    └── PostgradStudent.h     ← inherits Student
+```
+
+---
+
+## The Algorithms
+
+### Algorithm 1 — O(1) Constant: Fixed Grade Dashboard
+
+**Task:** Print a fixed 5×5 grade band summary table for the faculty.
+
+**How it works:** Two for loops iterate over fixed-size arrays — always 5 grade bands and always 5 performance categories. The table is always 5×5 = 25 cells regardless of how many students are in the system.
+
+**Why O(1):** The loop sizes are compile-time constants. The student count `n` has absolutely no effect on how many iterations run. Whether there are 8 students or 80,000, this function always does exactly 25 iterations. That is the definition of constant time.
+
+```
+Big-O: O(1)   Big-Θ: Θ(1)   Big-Ω: Ω(1)   Space: O(1)
+```
+
+---
+
+### Algorithm 2 — O(log n) Logarithmic: Binary Search
+
+**Task:** Find a specific student by their student number from a sorted list.
+
+**How it works:** The array is first sorted by student number. Binary search then checks the middle element — if the target is smaller it discards the right half, if larger it discards the left half. It keeps halving the remaining search space until the student is found or confirmed absent.
+
+**Why O(log n):** Each iteration cuts the problem in half. For 8 students, at most 3 comparisons are needed (log₂8 = 3). For 1024 students, at most 10. The recurrence T(n) = T(n/2) + O(1) solves to O(log n) by the Master Theorem.
+
+```
+Big-O: O(log n)   Big-Θ: Θ(log n)   Big-Ω: Ω(1)   Space: O(1)
+```
+
+> Best case Ω(1) — the very first midpoint checked happens to be the target.
+
+---
+
+### Algorithm 3 — O(n) Linear: Find Top Student
+
+**Task:** Find the student with the highest grade from an unsorted list.
+
+**How it works:** One pass through the entire array, keeping track of the highest grade seen so far. Every student is compared once against the current maximum.
+
+**Why O(n):** There is no shortcut when the data is unsorted. Even if the top student is the very first element, every remaining student still needs to be checked to confirm no higher grade exists. Best, average and worst case are all O(n).
+
+```
+Big-O: O(n)   Big-Θ: Θ(n)   Big-Ω: Ω(n)   Space: O(1)
+```
+
+---
+
+### Algorithm 4 — O(n log n) Log-Linear: Merge Sort
+
+**Task:** Rank all students by grade from highest to lowest.
+
+**How it works:** Recursively splits the array into two halves until each half has one element (which is trivially sorted), then merges the halves back together in sorted order. Splitting goes log n levels deep and merging costs O(n) at each level.
+
+**Why O(n log n):** The recurrence is T(n) = 2T(n/2) + O(n). By the Master Theorem (Case 2) this solves to O(n log n). This is the most efficient comparison-based sort and performs the same in all cases — already sorted input runs identically to reverse sorted input.
+
+```
+Big-O: O(n log n)   Big-Θ: Θ(n log n)   Big-Ω: Ω(n log n)   Space: O(n)
+```
+
+> Space is O(n) because temporary arrays are allocated during each merge step.
+
+---
+
+### Algorithm 5 — O(n²) Quadratic: Bubble Sort
+
+**Task:** Sort students by student number in ascending order so that binary search (Algorithm 2) can be applied to them.
+
+**How it works:** Two nested loops repeatedly compare adjacent students and swap them if they are out of order. The largest unsorted element bubbles to its correct position at the end of the array on each outer iteration. An early-exit flag stops the sort early if the array becomes sorted before all passes complete.
+
+**Why O(n²):** Two nested loops both scale with n. Worst case comparisons: (n−1) + (n−2) + ... + 1 = n(n−1)/2 = O(n²). Contrasting this directly with merge sort on the same data illustrates why algorithm selection matters — both sort the same students but at very different costs as n grows.
+
+```
+Big-O: O(n²)   Big-Θ: Θ(n²)   Big-Ω: Ω(n)   Space: O(1)
+```
+
+> Best case Ω(n) — if the array is already sorted, the early-exit flag fires after one pass.
+
+---
+
+### Algorithm 6 — O(2^n) Exponential: Study Group Subset Generator
+
+**Task:** Generate every possible combination of students that could form a study group from a shortlist of top performers.
+
+**How it works:** Uses a bitmask approach — each integer from 0 to 2ⁿ−1 is treated as a binary number where each bit represents whether a student is included (1) or excluded (0) from that subset. Iterating through all integers from 0 to 2ⁿ−1 produces every possible combination.
+
+**Why O(2^n):** Each student has two states — in or out. For n students this gives 2×2×...×2 (n times) = 2ⁿ possible subsets. This algorithm is intentionally run on only 4 students (2⁴ = 16 subsets). At n=20 this would produce over one million subsets; at n=30, over one billion.
+
+```
+Big-O: O(2^n)   Big-Θ: Θ(2^n)   Big-Ω: Ω(2^n)   Space: O(n)
+```
+
+---
+
+### Algorithm 7 — O(n!) Factorial: Presentation Order Generator
+
+**Task:** Generate every possible order in which a group of students could present their projects to the class.
+
+**How it works:** Uses recursive backtracking — at each level of recursion, one student is placed in the current position (swap into place), all orderings of the remaining students are generated recursively, then the swap is undone to restore the original order for the next choice. This explore-then-undo pattern is called backtracking.
+
+**Why O(n!):** There are n choices for position 1, n−1 for position 2, and so on: n × (n−1) × (n−2) × ... × 1 = n!. This algorithm is intentionally run on only 3 students (3! = 6 orderings). At n=8 this produces 40,320 orderings; at n=12, nearly 500 million.
+
+```
+Big-O: O(n!)   Big-Θ: Θ(n!)   Big-Ω: Ω(n!)   Space: O(n)
+```
+
+> Space is O(n) because the recursion call stack grows n levels deep.
+
+---
+
+## How to Run
+
+### Prerequisites
+
+You need a C++ compiler installed. On Mac, open Terminal and run:
+
+```bash
+xcode-select --install
+```
+
+Verify it installed correctly:
+
+```bash
+g++ --version
+```
+
+You should see a version number. If you do, you are ready.
+
+---
+
+### Step 1 — Get the files
+
+Make sure your folder structure looks exactly like this:
+
+```
+Assignment3/
+├── main.cpp
+└── models/
+    ├── Person.h
+    ├── Student.h
+    └── PostgradStudent.h
+```
+
+The `models` folder must be a subfolder inside `Assignment3`. Do not put all files in the same directory.
+
+---
+
+### Step 2 — Open the folder in VS Code
+
+In VS Code: **File → Open Folder** and select your `Assignment3` folder.
+
+---
+
+### Step 3 — Open the terminal
+
+In VS Code press `` Ctrl+` `` to open the integrated terminal. Make sure you are inside the `Assignment3` folder. You can confirm this by running:
+
+```bash
+pwd
+```
+
+It should show a path ending in `Assignment3`. If not, navigate there with `cd`.
+
+---
+
+### Step 4 — Compile
+
+```bash
+g++ -std=c++17 -o run main.cpp
+```
+
+If no output appears, the compilation was successful.
+
+---
+
+### Step 5 — Run
+
+```bash
+./run
+```
+
+You will see all 7 algorithms execute in sequence with full output for each one.
+
+---
+
+### Recompiling after changes
+
+Any time you edit a file, recompile before running again:
+
+```bash
+g++ -std=c++17 -o run main.cpp && ./run
+```
+
+This compiles and immediately runs in one command.
+
+---
+
+## OOP Summary
+
+| Concept | Where it appears |
+|---|---|
+| Abstraction | `Person` is abstract — cannot be instantiated directly |
+| Inheritance | `Student` extends `Person`, `PostgradStudent` extends `Student` |
+| Polymorphism | `getProfile()` is virtual — correct override called based on actual object type |
+| Encapsulation | All fields are private/protected, accessed only through getters |
