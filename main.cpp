@@ -367,7 +367,7 @@ int main()
 
     // ── Algorithm 2: O(log n) -- Logarithmic
     // Needs sorted array — sort first using bubble sort (Algo 5)
-    vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
+     vector<Student *> shuffled = {s6, s3, p2, s1, s5, p1, s2, s4};
     bubbleSort(shuffled);
     runBinarySearch(shuffled);
 
